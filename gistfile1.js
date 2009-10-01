@@ -2,7 +2,6 @@ jetpack.future.import("slideBar");
 jetpack.future.import("storage.simple");
 
 //BEGIN Base64 LIB
-// From http://www.webtoolkit.info/javascript-base64.html
 
 var Base64 = {
  
@@ -225,6 +224,9 @@ jetpack.slideBar.append({
 jetpack.storage.simple.username = $("#username", slide.contentDocument).val();
 jetpack.storage.simple.password = $("#password", slide.contentDocument).val();
 });
+$("#username", slide.contentDocument).val(jetpack.storage.simple.username);
+$("#password", slide.contentDocument).val(jetpack.storage.simple.password);
+
   },
 
   width: 300,
