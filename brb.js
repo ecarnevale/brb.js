@@ -250,44 +250,16 @@ $("#password", slide.contentDocument).val(jetpack.storage.simple.password);
         font-size: 10pt;
         text-align: center;
       }
-      textarea {
-        width: 100%;
-      }
       #settingsArea {
         padding: 1em;
         -moz-border-radius: 5px;
         background: #ccf;
-      }
-      #noteTime {
-        margin: 0;
-        font-weight: bold;
       }
       #saveButton {
         color: #833;
         padding-top: 1em;
         font-weight: bold;
         cursor: pointer;
-      }
-      #newNoteButton {
-        background: #ffa;
-        color: #330;
-        margin: 1em 0;
-        padding: 0.5em;
-        -moz-border-radius: 5px;
-        font-weight: bold;
-        text-align: center;
-        cursor: pointer;
-      }
-      .noteButton {
-        background: #ddd;
-        color: #333;
-        margin: 1em 0;
-        padding: 0.5em;
-        -moz-border-radius: 5px;
-        cursor: pointer;
-      }
-      .noteButtonTime {
-         font-weight: bold;
       }
     ]]></style>
     <body>
