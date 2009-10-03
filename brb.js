@@ -234,7 +234,7 @@ $("#password", slide.contentDocument).val(jetpack.storage.simple.password);
 
   },
 
-  width: 300,
+  width: 200,
   persist: true,
 
   // This automagically becomes our slidebar content.
@@ -277,6 +277,7 @@ $("#password", slide.contentDocument).val(jetpack.storage.simple.password);
 jetpack.statusBar.append({
 	//need to change to BRB icon...
   html: '<b>BRB</b>',
+  width: 40,
   onReady: function(doc) {
     $(doc).find("b").click(function() {
       if (true) { //TODO check if it already exists
