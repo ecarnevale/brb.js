@@ -164,9 +164,13 @@ fluidDB.choose = function(type){
 
 fluidDB.choose('sandbox');
 
-fluidDB.ajax = function(type, url, payload, callback, async_req, username, password){
+fluidDB.ajax = function(type, url, payload, callback, async_req, username, password, errorCallback){
     if((username != undefined) && (password != undefined)){
       var authenticate = true;
+    }
+    
+    if(errorCallback == undefined){
+        errorCallback = function (XMLHttpRequest, textStatus, errorThrown) {};
     }
     
     if(async_req == undefined){
@@ -190,22 +194,30 @@ fluidDB.ajax = function(type, url, payload, callback, async_req, username, passw
           url: url,
           data: payload,
           processData: false,
-          success: callback
+          success: callback,
+          error: errorCallback
     });
 }
 
-fluidDB.get = function(url, callback, async_req, username, password){
-    fluidDB.ajax("GET", fluidDB.baseURL+url, null, callback, async_req, username, password);
+fluidDB.get = function(url, callback, async_req, username, password, errorCallback){
+    fluidDB.ajax("GET", fluidDB.baseURL+url, null, callback, async_req, username, password, errorCallback);
 }
 
-fluidDB.post = function(url, payload, callback, async_req, username, password){
-    fluidDB.ajax("POST", fluidDB.baseURL+url, payload, callback, async_req, username, password);
+fluidDB.post = function(url, payload, callback, async_req, username, password, errorCallback){
+    fluidDB.ajax("POST", fluidDB.baseURL+url, payload, callback, async_req, username, password, errorCallback);
 }
 
-fluidDB.put = function(url, payload, callback, async_req, username, password){
-    fluidDB.ajax("PUT", fluidDB.baseURL+url, payload, callback, async_req, username, password);
+fluidDB.put = function(url, payload, callback, async_req, username, password, errorCallback){
+    fluidDB.ajax("PUT", fluidDB.baseURL+url, payload, callback, async_req, username, password, errorCallback);
 }
 
+fluidDB.delete = function(url, callback, async_req, username, password, errorCallback){
+    fluidDB.ajax("DELETE", fluidDB.baseURL+url, null, callback, async_req, username, password, errorCallback);
+}
+
+fluidDB.head = function(url, callback, async_req, username, password, errorCallback){
+    fluidDB.ajax("HEAD", fluidDB.baseURL+url, null, callback, async_req, username, password, errorCallback);
+}
 
 //END FluidDB REST LIB
 
@@ -284,28 +296,39 @@ jetpack.statusBar.append({
   width: 40,
   onReady: function(doc) {
     $(doc).find("b").click(function() {
-      if (true) { //TODO check if it already exists
         var pageURL = jetpack.tabs.focused.url;
-	fluidDB.post("objects", '{"about" : "'+ pageURL.toString() +'"}', function(json){
+    	fluidDB.post("objects", '{"about" : "'+ pageURL.toString() +'"}', function(json){
           var response = JSON.parse(json);
           var username = jetpack.storage.simple.username;
           var password = jetpack.storage.simple.password;
-	  //jetpack.notifications.show(response.id);
-          fluidDB.put("objects/"+response.id+"/"+username+"/remember",
-                       '{"value" : true }',
-                       function(json){
-                          jetpack.notifications.show("Remembered for you");
-                       },
-                       true,
-                       username,
-                       password);
+          fluidDB.head("objects/"+response.id+"/"+username+"/remember",
+                         function(json){
+                             //tag existed so we try to forget about the page…
+                             fluidDB.delete("objects/"+response.id+"/"+username+"/remember",
+                                             function(json){
+                                               jetpack.notifications.show("Forgot the page for you");
+                                            },
+                                            true,
+                                            username,
+                                            password);
+                         },
+                         true,
+                         username,
+                         password,
+                         function (xhr, textStatus, errorThrown){
+                             if(xhr.status == 404){
+                                 //tag doesn't exist
+                                 fluidDB.put("objects/"+response.id+"/"+username+"/remember",
+                                          '{"value" : true }',
+                                          function(json){
+                                             jetpack.notifications.show("Remembered for you");
+                                          },
+                                          true,
+                                          username,
+                                          password);
+                             }
+                         });
         });
-
-				
-      } else { //remove the tag
-        jetpack.notifications.show("Removed"); 
-				
-      }
     });
   }
 });
