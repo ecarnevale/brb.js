@@ -226,11 +226,15 @@ jetpack.slideBar.append({
 
     // Remove the shown note when the user clicks the remove-note button.
     $("#saveButton", slide.contentDocument).click(function () {
-jetpack.storage.simple.username = $("#username", slide.contentDocument).val();
-jetpack.storage.simple.password = $("#password", slide.contentDocument).val();
-});
-$("#username", slide.contentDocument).val(jetpack.storage.simple.username);
-$("#password", slide.contentDocument).val(jetpack.storage.simple.password);
+        jetpack.storage.simple.username = $("#username", slide.contentDocument).val();
+        jetpack.storage.simple.password = $("#password", slide.contentDocument).val();
+        initTag(jetpack.storage.simple.username,
+          jetpack.storage.simple.password,
+          "remember",
+          "a page I need to remember");
+    });
+    $("#username", slide.contentDocument).val(jetpack.storage.simple.username);
+    $("#password", slide.contentDocument).val(jetpack.storage.simple.password);
 
   },
 
@@ -281,10 +285,6 @@ jetpack.statusBar.append({
   onReady: function(doc) {
     $(doc).find("b").click(function() {
       if (true) { //TODO check if it already exists
-          initTag(jetpack.storage.simple.username,
-            jetpack.storage.simple.password,
-            "remember",
-            "a page I need to remember");
         var pageURL = jetpack.tabs.focused.url;
 	fluidDB.post("objects", '{"about" : "'+ pageURL.toString() +'"}', function(json){
           var response = JSON.parse(json);
